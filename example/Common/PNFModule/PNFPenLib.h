@@ -82,11 +82,6 @@
 -(void) restartPen;
 -(void) disConnectPen;
 
-//-(void) setRetObj:(NSObject *) obj;
-//-(NSObject*) getRetObj;
-//-(void) setRetObjForEnv:(NSObject *) obj;
-//-(NSObject*) getRetObjForEnv;
-
 -(CGSize) getCalibrationSize;
 -(void) setCalibration:(CGRect) rtDraw GuideMargin:(float) margin;
 -(void) setCalibrationData:(CGRect) rtDraw GuideMargin:(float) margin CalibPoint:(CGPoint[]) ptCal;
@@ -96,12 +91,6 @@
 
 -(void) changeAudioMode:(BOOL)audio;
 -(void) changeVolume:(int)vol;
-
-//-(NSDictionary*) ReadQ;
-//-(void) RemoveQ;
-//-(void) ClearQ;
-//-(void) StartReadQ;
-//-(void) EndReadQ;
 
 -(void) initPenUp;
 -(float) calcSmartMarkerEraseThick:(BOOL)isBig;
