@@ -97,11 +97,11 @@
 -(void) changeAudioMode:(BOOL)audio;
 -(void) changeVolume:(int)vol;
 
--(NSDictionary*) ReadQ;
--(void) RemoveQ;
--(void) ClearQ;
--(void) StartReadQ;
--(void) EndReadQ;
+//-(NSDictionary*) ReadQ;
+//-(void) RemoveQ;
+//-(void) ClearQ;
+//-(void) StartReadQ;
+//-(void) EndReadQ;
 
 -(void) initPenUp;
 -(float) calcSmartMarkerEraseThick:(BOOL)isBig;

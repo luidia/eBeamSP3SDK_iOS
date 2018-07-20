@@ -48,11 +48,11 @@ enum CaliType {
 
 - (void)dealloc
 {
-    [m_PenController StartReadQ];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PNF_PEN_READ_DATA" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PNF_LOG_MSG" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PNF_MSG" object:nil];
+    
+    [m_PenController endCalibrationMode];
     
     if (canceBtn){
         [canceBtn release];
@@ -147,9 +147,6 @@ enum CaliType {
         type = CaliType_SmartMarker_Left;
     }
     
-    if (m_PenController) {
-        [m_PenController EndReadQ];
-    }
     [m_PenController startCalibrationMode];
 
     [self InitData];
