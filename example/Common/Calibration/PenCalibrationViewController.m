@@ -96,7 +96,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(FreeLogMsg:) name:@"PNF_LOG_MSG" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(PenCallBackFunc:) name:@"PNF_MSG" object:nil];
 
-    [m_PenController setRetObjForEnv:self];
     if (m_PenController) {
         [m_PenController EndReadQ];
     }
@@ -214,8 +213,7 @@
 -(void) PenHandlerWithMsg:(NSNotification*) note
 {
     NSDictionary* dic = [note object];
-    if ([m_PenController getRetObjForEnv] != self)
-        return;
+    
     [self PenHandlerWithDictionary:dic];
 }
 -(void) PenHandlerWithDictionary:(NSDictionary*) dic

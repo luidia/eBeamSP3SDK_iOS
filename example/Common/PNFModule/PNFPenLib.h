@@ -82,10 +82,10 @@
 -(void) restartPen;
 -(void) disConnectPen;
 
--(void) setRetObj:(NSObject *) obj;
--(NSObject*) getRetObj;
--(void) setRetObjForEnv:(NSObject *) obj;
--(NSObject*) getRetObjForEnv;
+//-(void) setRetObj:(NSObject *) obj;
+//-(NSObject*) getRetObj;
+//-(void) setRetObjForEnv:(NSObject *) obj;
+//-(NSObject*) getRetObjForEnv;
 
 -(CGSize) getCalibrationSize;
 -(void) setCalibration:(CGRect) rtDraw GuideMargin:(float) margin;

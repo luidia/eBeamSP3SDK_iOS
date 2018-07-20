@@ -147,7 +147,6 @@ enum CaliType {
         type = CaliType_SmartMarker_Left;
     }
     
-    [m_PenController setRetObjForEnv:self];
     if (m_PenController) {
         [m_PenController EndReadQ];
     }
@@ -375,8 +374,7 @@ enum CaliType {
 -(void) PenHandlerWithMsg:(NSNotification*) note
 {
     NSDictionary* dic = [note object];
-    if ([m_PenController getRetObjForEnv] != self)
-        return;
+    
     [self PenHandlerWithDictionary:dic];
 }
 -(void) PenHandlerWithDictionary:(NSDictionary*) dic
