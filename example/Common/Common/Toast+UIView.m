@@ -179,12 +179,16 @@ static NSString *kDurationKey = @"duration";
     // create the parent view
     UIView *wrapperView = [[[UIView alloc] init] autorelease];
     [wrapperView.layer setCornerRadius:kCornerRadius];
-    [wrapperView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:kOpacity]];
+    if (image)
+        wrapperView.backgroundColor = [UIColor clearColor];
+    else
+        [wrapperView setBackgroundColor:[[UIColor colorWithRed:255./255. green:198./255. blue:25./255. alpha:1] colorWithAlphaComponent:kOpacity]];
     
     if(image != nil) {
         imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
-        [imageView setFrame:CGRectMake(kHorizontalPadding, kVerticalPadding, kImageWidth, kImageHeight)];
+        [imageView setFrame:CGRectMake(kHorizontalPadding*2, kVerticalPadding, image.size.width/2, image.size.height/2)];
+        [imageView setBackgroundColor:[UIColor clearColor]];
     }
     
     float imageWidth, imageHeight, imageLeft;
@@ -202,42 +206,46 @@ static NSString *kDurationKey = @"duration";
         titleLabel = [[[UILabel alloc] init] autorelease];
         [titleLabel setNumberOfLines:kMaxTitleLines];
         [titleLabel setFont:[UIFont boldSystemFontOfSize:kFontSize]];
-        [titleLabel setTextAlignment:NSTextAlignmentCenter];
-        [titleLabel setLineBreakMode:NSLineBreakByWordWrapping];
+        [titleLabel setTextAlignment:(NSTextAlignment)NSTextAlignmentCenter/*NSTextAlignmentLeft*/];
+        [titleLabel setLineBreakMode:(NSLineBreakMode)NSLineBreakByWordWrapping];
         [titleLabel setTextColor:[UIColor whiteColor]];
         [titleLabel setBackgroundColor:[UIColor clearColor]];
         [titleLabel setAlpha:1.0];
+        [titleLabel setAdjustsFontSizeToFitWidth:YES];
         [titleLabel setText:title];
         
         // size the title label according to the length of the text
         CGSize maxSizeTitle = CGSizeMake((self.bounds.size.width * kMaxWidth) - imageWidth, self.bounds.size.height * kMaxHeight);
-        //        CGSize expectedSizeTitle = [title sizeWithFont:titleLabel.font constrainedToSize:maxSizeTitle lineBreakMode:titleLabel.lineBreakMode];
         CGRect textRect = [title boundingRectWithSize:maxSizeTitle
                                               options:NSStringDrawingUsesLineFragmentOrigin
                                            attributes:@{NSFontAttributeName:titleLabel.font}
                                               context:nil];
         CGSize expectedSizeTitle = textRect.size;
+        //        CGSize expectedSizeTitle = [title sizeWithFont:titleLabel.font constrainedToSize:maxSizeTitle lineBreakMode:titleLabel.lineBreakMode];
         [titleLabel setFrame:CGRectMake(0, 0, expectedSizeTitle.width, expectedSizeTitle.height)];
     }
     
     if (message != nil) {
         messageLabel = [[[UILabel alloc] init] autorelease];
         [messageLabel setNumberOfLines:kMaxMessageLines];
-        [messageLabel setFont:[UIFont systemFontOfSize:kFontSize]];
-        [messageLabel setLineBreakMode:NSLineBreakByWordWrapping];
-        [messageLabel setTextColor:[UIColor whiteColor]];
+        //        [messageLabel setFont:[UIFont systemFontOfSize:kFontSize]];
+        //        [messageLabel setFont:[UIFont fontWithName:@"Helvetica" size:kFontSize]];
+        [messageLabel setTextAlignment:(NSTextAlignment)NSTextAlignmentCenter/*NSTextAlignmentLeft*/];
+        [messageLabel setLineBreakMode:(NSLineBreakMode)NSLineBreakByWordWrapping];
+        [messageLabel setTextColor:[UIColor darkGrayColor]];
         [messageLabel setBackgroundColor:[UIColor clearColor]];
         [messageLabel setAlpha:1.0];
+        [messageLabel setAdjustsFontSizeToFitWidth:YES];
         [messageLabel setText:message];
         
         // size the message label according to the length of the text
         CGSize maxSizeMessage = CGSizeMake((self.bounds.size.width * kMaxWidth) - imageWidth, self.bounds.size.height * kMaxHeight);
-        //        CGSize expectedSizeMessage = [message sizeWithFont:messageLabel.font constrainedToSize:maxSizeMessage lineBreakMode:messageLabel.lineBreakMode];
-        CGRect textRect = [title boundingRectWithSize:maxSizeMessage
-                                              options:NSStringDrawingUsesLineFragmentOrigin
-                                           attributes:@{NSFontAttributeName:messageLabel.font}
-                                              context:nil];
+        CGRect textRect = [message boundingRectWithSize:maxSizeMessage
+                                                options:NSStringDrawingUsesLineFragmentOrigin
+                                             attributes:@{NSFontAttributeName:messageLabel.font}
+                                                context:nil];
         CGSize expectedSizeMessage = textRect.size;
+        //        CGSize expectedSizeMessage = [message sizeWithFont:messageLabel.font constrainedToSize:maxSizeMessage lineBreakMode:messageLabel.lineBreakMode];
         [messageLabel setFrame:CGRectMake(0, 0, expectedSizeMessage.width, expectedSizeMessage.height)];
     }
     
