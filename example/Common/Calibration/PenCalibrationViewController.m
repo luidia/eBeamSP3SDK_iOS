@@ -8,13 +8,13 @@
 
 #import "PenCalibrationViewController.h"
 #import "UIImage+ImageNamed.h"
+#import "FFCircularProgressView.h"
 #import "PNFPenLibExtension.h"
 #import "PNFDefine.h"
 
 @interface PenCalibrationViewController () <UIAlertViewDelegate>
 {
-    IBOutlet UIButton *canceBtn;
-    IBOutlet UIButton *retryBtn;
+    FFCircularProgressView* indicator;
     
     IBOutlet UIImageView *eBeam_Paper;
     
@@ -40,16 +40,6 @@
     
     [m_PenController endCalibrationMode];
     
-    if (canceBtn){
-        [canceBtn release];
-        canceBtn = nil;
-    }
-    
-    if (retryBtn){
-        [retryBtn release];
-        retryBtn = nil;
-    }
-    
     if (eBeam_Paper){
         [eBeam_Paper release];
         eBeam_Paper = nil;
@@ -72,6 +62,13 @@
     
     if(m_PenController){
         m_PenController = nil;
+    }
+    
+    if (indicator) {
+        [indicator stopSpinProgressBackgroundLayer];
+        [indicator removeFromSuperview];
+        [indicator release];
+        indicator = nil;
     }
     
     [super dealloc];
@@ -140,7 +137,7 @@
                                     eBeam_Point2.frame.size.height);
 }
 
-- (IBAction)cancelClicked:(id)sender {
+- (IBAction)closeClicked:(id)sender {
     if (delegate)
     {
         if ([self.delegate respondsToSelector:@selector(closePenCalibrationViewController)])
@@ -153,6 +150,7 @@
     [self InitData];
 }
 
+//NSNotificationCenter "PNF_LOG_MSG"
 - (void) FreeLogMsg:(NSNotification *) note {
     NSString * szS = (NSString *) [note object];
     NSLog(@"FreeLogMsg szS==>%@", szS);
@@ -166,7 +164,9 @@
 
     }
     else if ([szS isEqualToString:@"SESSION_CLOSED"]) {
-        [self cancelClicked:nil];
+        HIDE_INDICATOR()
+        
+        [self closeClicked:nil];
     }
     else if ([szS isEqualToString:@"PEN_RMD_ERROR"]) {
 
@@ -175,10 +175,13 @@
     }
 }
 
+//NSNotificationCenter "PNF_MSG"
 -(void) PenCallBackFunc:(NSNotification *)call {
     NSString * szS = (NSString *) [call object];
     NSLog(@"PenCallBackFunc szS==>[%@]", szS);
     if ([szS isEqualToString:@"CALIBRATION_SAVE_OK"]) {
+        HIDE_INDICATOR()
+        
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"change calbration complete"
                                                                        message:@""
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -194,6 +197,8 @@
         [self presentViewController:alert animated:YES completion:nil];
     }
     else if ([szS isEqualToString:@"CALIBRATION_SAVE_FAIL"] || [szS isEqualToString:@"DI_SEND_ERR"]) {
+        HIDE_INDICATOR()
+        
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"change calbration fail"
                                                                        message:@""
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -207,6 +212,7 @@
     }
 }
 
+//NSNotificationCenter "PNF_PEN_READ_DATA"
 -(void) PenHandlerWithMsg:(NSNotification*) note
 {
     NSDictionary* dic = [note object];
@@ -327,6 +333,7 @@
     m_CalResultPoint[3].y = m_CalResultPointTemp[0].y;
     
     [m_PenController sendCalibrationDataToDevice:DIRECTION_TOP CalibPoint:m_CalResultPoint];
+    SHOW_INDICATOR(self.view)
 }
 
 -(BOOL) shouldAutoRotate {

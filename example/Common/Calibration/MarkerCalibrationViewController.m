@@ -8,6 +8,7 @@
 
 #import "MarkerCalibrationViewController.h"
 #import "UIImage+ImageNamed.h"
+#import "FFCircularProgressView.h"
 #import "PNFPenLibExtension.h"
 #import "PNFDefine.h"
 
@@ -21,8 +22,7 @@ enum CaliType {
 
 @interface MarkerCalibrationViewController () <UIAlertViewDelegate>
 {
-    IBOutlet UIButton *canceBtn;
-    IBOutlet UIButton *retryBtn;
+    FFCircularProgressView* indicator;
     
     IBOutlet UIButton *eBeam_Left;
     IBOutlet UIButton *eBeam_Top;
@@ -53,16 +53,6 @@ enum CaliType {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PNF_MSG" object:nil];
     
     [m_PenController endCalibrationMode];
-    
-    if (canceBtn){
-        [canceBtn release];
-        canceBtn = nil;
-    }
-    
-    if (retryBtn){
-        [retryBtn release];
-        retryBtn = nil;
-    }
     
     if (eBeam_Left){
         [eBeam_Left release];
@@ -106,6 +96,13 @@ enum CaliType {
     
     if(m_PenController){
         m_PenController = nil;
+    }
+    
+    if (indicator) {
+        [indicator stopSpinProgressBackgroundLayer];
+        [indicator removeFromSuperview];
+        [indicator release];
+        indicator = nil;
     }
     
     [super dealloc];
@@ -212,7 +209,7 @@ enum CaliType {
     eBeam_Point1.frame = CGRectMake(5, 5, eBeam_Point1.frame.size.width, eBeam_Point1.frame.size.height);
 }
 
-- (IBAction)cancelClicked:(id)sender {
+- (IBAction)closeClicked:(id)sender {
     [m_PenController setStationPositionForCalibration:saveStationPosition];
     
     if (delegate)
@@ -314,6 +311,7 @@ enum CaliType {
     [self retryClicked:nil];
 }
 
+//NSNotificationCenter "PNF_LOG_MSG"
 - (void) FreeLogMsg:(NSNotification *) note {
     NSString * szS = (NSString *) [note object];
     NSLog(@"FreeLogMsg szS==>%@", szS);
@@ -327,7 +325,9 @@ enum CaliType {
 
     }
     else if ([szS isEqualToString:@"SESSION_CLOSED"]) {
-        [self cancelClicked:nil];
+        HIDE_INDICATOR()
+        
+        [self closeClicked:nil];
     }
     else if ([szS isEqualToString:@"PEN_RMD_ERROR"]) {
 
@@ -336,10 +336,13 @@ enum CaliType {
     }
 }
 
+//NSNotificationCenter "PNF_MSG"
 -(void) PenCallBackFunc:(NSNotification *)call {
     NSString * szS = (NSString *) [call object];
     NSLog(@"PenCallBackFunc szS==>[%@]", szS);
     if ([szS isEqualToString:@"CALIBRATION_SAVE_OK"]) {
+        HIDE_INDICATOR()
+        
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"change calbration complete"
                                                                        message:@""
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -355,6 +358,8 @@ enum CaliType {
         [self presentViewController:alert animated:YES completion:nil];
     }
     else if ([szS isEqualToString:@"CALIBRATION_SAVE_FAIL"] || [szS isEqualToString:@"DI_SEND_ERR"]) {
+        HIDE_INDICATOR()
+        
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"change calbration fail"
                                                                        message:@""
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -368,6 +373,7 @@ enum CaliType {
     }
 }
 
+//NSNotificationCenter "PNF_PEN_READ_DATA"
 -(void) PenHandlerWithMsg:(NSNotification*) note
 {
     NSDictionary* dic = [note object];
@@ -510,6 +516,7 @@ enum CaliType {
     m_CalResultPoint[3].y = m_CalResultPointTemp[0].y;
     
     [m_PenController sendCalibrationDataToDevice:(enum DEVICE_DIRECTION)type CalibPoint:m_CalResultPoint];
+    SHOW_INDICATOR(self.view)
 }
 
 -(BOOL) shouldAutoRotate {
