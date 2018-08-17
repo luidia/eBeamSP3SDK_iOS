@@ -7,7 +7,6 @@
 //
 
 #import "FFCircularProgressView.h"
-#import "UIColor+iOS7.h"
 
 @interface FFCircularProgressView()
 @property (nonatomic, retain) CAShapeLayer *progressBackgroundLayer;
